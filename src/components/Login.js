@@ -7,31 +7,40 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {  
     const [password, setPassword] = useState(""); 
     const [email, setEmail] = useState("");  
-    
+    const [token, setToken] = useState(""); 
+
     const navigate = useNavigate();
 
     function sendInfo (event) { 
         event.preventDefault(); 
 
-        const info = {email: {email}, password: {password}}; 
+        const info = {email, password}; 
         const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", info); 
 
-        promise.then(recebeToken); 
+        promise.then(response => { 
+            setToken(response.data.token); 
+            console.log(response.data.token);
+            recebeToken();
+        });
 
         promise.catch(err => {
-            alert(err.response.statusText);
+            console(err.response);
         });
     } 
 
     function recebeToken() { 
         const config = {
             headers: {Authorization: `Bearer ${token}`}
-          }; 
+        }; 
 
-          const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/exercise-login/tasks",config
-          );
-          promise.then((res) => {
+          const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login",config); 
+
+          promise.then(response => {
             navigate("/cadastro");
+          }); 
+
+          promise.catch(err => {
+            alert("Erro");
           });
     }
 

@@ -15,8 +15,9 @@ export default function Cadastro() {
     function sendInfo (event) { 
         event.preventDefault(); 
 
-        const info = {email: {email}, name: {name}, image: {image}, password: {password}}; 
-        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up", info); 
+        const info = {email, name, image, password };  
+        console.log(info);
+        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up", info);  
 
         promise.then(response => { 
             console.log(response.data);
@@ -24,7 +25,7 @@ export default function Cadastro() {
         }); 
 
         promise.catch(err => {
-            alert(err.response.statusText);
+            console.log(err.response);
         });
     }
 
