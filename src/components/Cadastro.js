@@ -1,38 +1,31 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import styled from "styled-components";  
+import styled from "styled-components";   
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {  
-    const [password, setPassword] = useState(""); 
+export default function Cadastro() {  
+    const [name, setName] = useState(""); 
     const [email, setEmail] = useState("");  
-    
+    const [password, setPassword] = useState(""); 
+    const [image, setImage] = useState("");   
+
     const navigate = useNavigate();
 
     function sendInfo (event) { 
         event.preventDefault(); 
 
-        const info = {email: {email}, password: {password}}; 
-        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", info); 
+        const info = {email: {email}, name: {name}, image: {image}, password: {password}}; 
+        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up", info); 
 
-        promise.then(recebeToken); 
+        promise.then(response => { 
+            console.log(response.data);
+            navigate("/");
+        }); 
 
         promise.catch(err => {
             alert(err.response.statusText);
         });
-    } 
-
-    function recebeToken() { 
-        const config = {
-            headers: {Authorization: `Bearer ${token}`}
-          }; 
-
-          const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/exercise-login/tasks",config
-          );
-          promise.then((res) => {
-            navigate("/cadastro");
-          });
     }
 
     return( 
@@ -46,8 +39,10 @@ export default function Login() {
         <Dados>
             <input type="email" placeholder= "email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
             <input type="password" placeholder="senha" value={password} onChange={(event) => setPassword(event.target.value)} required/>  
-            <button>Entrar</button> 
-            <Link to="/cadastro"><h3>Não tem uma conta? Cadastre-se!</h3></Link>
+            <input type="text" placeholder= "nome" value={name} onChange={(event) => setName(event.target.value)} required /> 
+            <input type="url" placeholder= "image" value={image} onChange={(event) => setImage(event.target.value)}required /> 
+            <button>Cadastrar</button> 
+            <Link to="/"><h3>Já tem uma conta? Faça o login!</h3></Link>
         </Dados>  
         </form>
         </>
@@ -116,9 +111,10 @@ const Dados = styled.div`
     h3{  
         margin-top: 25px; 
         font-size: 14px; 
-        color: rgba(82, 182, 255, 1);  
+        color: rgba(82, 182, 255, 1); 
         text-decoration: underline;
-        color: rgba(82, 182, 255, 1);
+        color: rgba(82, 182, 255, 1); 
+        margin-bottom: 25px;
 
         &:hover { 
             cursor: pointer;
