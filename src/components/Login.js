@@ -2,7 +2,9 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";  
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";  
+import { render } from 'react-dom'; 
+import { ThreeDots } from  'react-loader-spinner'; 
 
 export default function Login({setUserData}) {  
     const [password, setPassword] = useState(""); 

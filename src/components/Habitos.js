@@ -59,7 +59,7 @@ export default function Habitos({userData}) {
     } 
 
     function toHistorico() { 
-        navigate("/");
+        navigate("/historico");
     }
 
     function cancelar() { 

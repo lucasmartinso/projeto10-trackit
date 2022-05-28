@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function Hoje({userData}) {  
     const navigate = useNavigate();  
-    const [clicked, setClicked] = useState(false);  
 
     function toHabitos() {  
         navigate("/habitos");
@@ -28,21 +27,12 @@ export default function Hoje({userData}) {
                 </Header> 
 
                 <Title>
-                    <h2>Segunda 17/05</h2> 
+                    <h2>Histórico</h2> 
                 </Title>   
 
                 <Mensagem>
-                    <h3>Nenhum hábito concluido ainda</h3> 
-                </Mensagem>   
-
-                <Habito clicked={clicked}> 
-                    <Texto>
-                        <h2>Ler 1 capítulo de livro</h2> 
-                        <p>Sequência atual: 3 dias</p> 
-                        <p>Seu recorde: 5 dias</p> 
-                    </Texto>
-                    <ion-icon name="checkbox" onClick={() => setClicked(!clicked)}></ion-icon>
-                </Habito>
+                    <h3>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</h3> 
+                </Mensagem>  
 
                 <Footer>
                     <span onClick={toHabitos}>Hábitos</span>   
@@ -132,14 +122,14 @@ const Mensagem = styled.div`
     height: 100%;   
     padding-left: 18px; 
     padding-right: 18px;  
-    margin-top: 4px;
+    margin-top: 29px;
 
     h3{ 
         font-size: 18px; 
-        color: rgba(186, 186, 186, 1);
+        color: rgba(102, 102, 102, 1);
         word-break: break-word;
     }
-` 
+`  
 const Habito = styled.div` 
     margin-top: 28px;
     display: flex; 
