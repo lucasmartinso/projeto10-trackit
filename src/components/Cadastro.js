@@ -32,8 +32,7 @@ export default function Cadastro() {
     return( 
         <>
         <Conatiner>
-            <img src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f4c8.svg" />   
-            <h1>TrackIt</h1>
+            <img src="image/Group 8.svg" />   
         </Conatiner>
 
         <form onSubmit={sendInfo}>
@@ -58,7 +57,7 @@ const Conatiner = styled.div`
     flex-direction: column; 
     align-items: center; 
     justify-content: center;  
-    margin-top: 68px;
+    padding-top: 68px;
 
     img{
         width: 180px;
@@ -72,13 +71,14 @@ const Conatiner = styled.div`
 
     }
 `  
-const Dados = styled.div`
+const Dados = styled.div` 
+    background-color: #FFFFFF;
     width: 100%;  
     display: flex; 
     justify-content: center;   
     align-items: center;
     flex-direction: column;  
-    margin-top: 43px;  
+    padding-top: 43px;  
     font-size: 20px;  
     font-weigth: 100;
     color: rgba(219, 219, 219, 1);

@@ -1,20 +1,107 @@
 import styled from "styled-components"; 
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'; 
 import 'react-circular-progressbar/dist/styles.css'; 
-import { useState } from "react";
+import { useState } from "react"; 
+import { useNavigate } from "react-router-dom";
 
-export default function Habitos() {  
+export default function Habitos({userData}) {  
     const [clicked, setClicked] = useState(false);
     const [habito, setHabito] = useState("");  
-    const [dia, setDias] = useState([]); 
+    const [dia, setDia] = useState([]);    
+    const navigate = useNavigate();   
 
-    console.log(habito);
+    console.log(dia);
+
+    const infoDias = [
+        {
+            abreviatura : "D",  
+            day: "domingo", 
+            state: false
+        }, 
+        {
+            abreviatura : "S",  
+            day: "segunda", 
+            state: false
+        }, 
+        {
+            abreviatura : "T",  
+            day: "terca", 
+            state: false
+        },  
+        {
+            abreviatura : "Q",  
+            day: "quarta", 
+            state: false
+        },  
+        {
+            abreviatura : "Q",  
+            day: "quinta", 
+            state: false
+        },  
+        {
+            abreviatura : "S",  
+            day: "sexta", 
+            state: false
+        },  
+        {
+            abreviatura : "S",  
+            day: "sabado", 
+            state: false
+        } 
+    ];  
+
+    function toHabitos() {  
+        navigate("/habitos");
+    } 
+
+    function toHoje() { 
+        navigate("/hoje");
+    } 
+
+    function toHistorico() { 
+        navigate("/");
+    }
+
+    function cancelar() { 
+        setHabito(""); 
+        setClicked(false);
+    }   
+
+    function tapCard(cardIndex) {   
+
+        for(let i=0; i<dia.length; i++) { 
+            if(dia[i] === cardIndex) {
+                dia.splice(i,1);
+            }
+        }  
+        setDia([...dia,cardIndex]); 
+
+        let days = infoDias.map((value,index) => {
+            if(index === cardIndex) { 
+                return {
+                    ...value, 
+                    state: true,
+                }
+            } else { 
+                return { 
+                    ...value,
+                }
+            }
+        }) 
+        console.log(days);
+    }
+
+    function SelectDay({tapCard, index, abreviatura, state, day}) {  
+        return(
+            <SelecaoDia onClick={() => tapCard(index)} state={state} day={day}>{abreviatura}</SelecaoDia>
+        ) 
+    }
 
     return(
         <Container>
             <Header>
                 <h2>TrackIt</h2> 
-                <img src="https://midias.correiobraziliense.com.br/_midias/jpg/2016/04/05/675x450/1_cbnfot050420160102-21057794.jpg?20220217210708?20220217210708"/>
+                <img src={userData}/>
             </Header> 
 
             <Title>
@@ -25,17 +112,19 @@ export default function Habitos() {
             {clicked ?(
             <CriarHabito>
                 <input type="text" placeholder= "nome do hábito" value={habito} onChange={(e) => setHabito(e.target.value)} required/>  
-                <Dias>
-                    <button onClick={() => setDias("segunda")}>D</button>
-                    <button onClick={() => setDias("segunda")}>S</button>
-                    <button onClick={() => setDias("segunda")}>T</button>
-                    <button onClick={() => setDias("segunda")}>Q</button>
-                    <button onClick={() => setDias("segunda")}>Q</button>
-                    <button onClick={() => setDias("segunda")}>S</button>
-                    <button onClick={() => setDias("segunda")}>S</button>
+                <Dias> 
+                    {infoDias.map((infoDia,index) => (
+                    <SelectDay  
+                        index={index}
+                        abreviatura = {infoDia.abreviatura} 
+                        state = {infoDia.state} 
+                        day = {infoDia.day} 
+                        tapCard ={tapCard}
+                    />
+                    ))}
                 </Dias> 
                 <Botoes>
-                    <h4 onClick={() => setClicked(false)}>Cancelar</h4> 
+                    <h4 onClick={cancelar}>Cancelar</h4> 
                     <button>Salvar</button>
                 </Botoes>
             </CriarHabito> 
@@ -46,8 +135,8 @@ export default function Habitos() {
             </Mensagem>  
 
             <Footer>
-                <span>Hábitos</span>   
-                <BolinhaFooter> 
+                <span onClick={toHabitos}>Hábitos</span>   
+                <BolinhaFooter onClick={toHoje}> 
                     <CircularProgressbar 
                     value={66} 
                     text= "Hoje"  
@@ -59,9 +148,9 @@ export default function Habitos() {
                     rotation: 0
                     })}
                     /> 
-                </BolinhaFooter>
-                <span>Histórico</span>
-            </Footer>
+                    </BolinhaFooter>
+                    <span onClick={toHistorico}>Histórico</span>
+                </Footer>
         </Container>
     )
 } 
@@ -155,21 +244,19 @@ const Dias = styled.div`
     display: flex;  
     padding-left: 19px;  
     justify-content: flex-start; 
+`  
+const SelecaoDia = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.state ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.state ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
 
-    button {  
-        border-radius: 5px; 
-        margin-right: 4px;
-        width: 30px; 
-        height: 30px; 
-        color: rgba(219, 219, 219, 1);
-        border: 1px solid rgba(212, 212, 212, 1); 
-        background-color: rgba(255, 255, 255, 1);  
-
-        &:hover{ 
-            cursor: pointer; 
-        }
-    }
-
+    &:hover{ 
+        cursor: pointer; 
 ` 
 const Botoes = styled.div`
     width: 100%; 

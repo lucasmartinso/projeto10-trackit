@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";  
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 
-export default function Login() {  
+export default function Login({setUserData}) {  
     const [password, setPassword] = useState(""); 
     const [email, setEmail] = useState("");  
     const [token, setToken] = useState(""); 
@@ -15,12 +15,26 @@ export default function Login() {
         event.preventDefault(); 
 
         const info = {email, password}; 
-        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", info); 
+        const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", info);  
 
-        promise.then(response => { 
+        promise.then(response => {  
             setToken(response.data.token); 
-            console.log(response.data.token);
-            recebeToken();
+            console.log(response.data.image);  
+            setUserData(response.data.image);  
+            const config = {
+                headers: {Authorization: `Bearer ${response.data.token}`}
+            }; 
+    
+              const promiss = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",config); 
+    
+              promiss.then(response => { 
+                console.log(response.data);
+                navigate("/habitos");
+              }); 
+    
+              promise.catch(err => {
+                alert("Erro");
+              });
         });
 
         promise.catch(err => {
@@ -28,27 +42,11 @@ export default function Login() {
         });
     } 
 
-    function recebeToken() { 
-        const config = {
-            headers: {Authorization: `Bearer ${token}`}
-        }; 
-
-          const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login",config); 
-
-          promise.then(response => {
-            navigate("/cadastro");
-          }); 
-
-          promise.catch(err => {
-            alert("Erro");
-          });
-    }
 
     return( 
         <>
         <Conatiner>
-            <img src="https://notion-emojis.s3-us-west-2.amazonaws.com/prod/svg-twitter/1f4c8.svg" />   
-            <h1>TrackIt</h1>
+            <img src="image/Group 8.svg" />   
         </Conatiner>
 
         <form onSubmit={sendInfo}>
@@ -71,7 +69,7 @@ const Conatiner = styled.div`
     flex-direction: column; 
     align-items: center; 
     justify-content: center;  
-    margin-top: 68px;
+    padding-top: 68px;
 
     img{
         width: 180px;
@@ -85,13 +83,14 @@ const Conatiner = styled.div`
 
     }
 `  
-const Dados = styled.div`
+const Dados = styled.div` 
+    background-color: #FFFFFF;
     width: 100%;  
     display: flex; 
     justify-content: center;   
     align-items: center;
     flex-direction: column;  
-    margin-top: 43px;  
+    padding-top: 43px;  
     font-size: 20px;  
     font-weigth: 100;
     color: rgba(219, 219, 219, 1);
@@ -110,7 +109,7 @@ const Dados = styled.div`
     button{   
         width: 303px;
         height: 45px;
-        background: rgba(82, 182, 255, 1);
+        background-color: rgba(82, 182, 255, 1);
         color: white; 
         font-size: 21px; 
         font-weight: 400; 
@@ -127,7 +126,8 @@ const Dados = styled.div`
         font-size: 14px; 
         color: rgba(82, 182, 255, 1);  
         text-decoration: underline;
-        color: rgba(82, 182, 255, 1);
+        color: rgba(82, 182, 255, 1); 
+        padding-bottom: 90px;
 
         &:hover { 
             cursor: pointer;
