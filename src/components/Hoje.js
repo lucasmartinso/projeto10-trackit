@@ -66,7 +66,7 @@ export default function Hoje({userData,setUserProgress}) {
                 </Mensagem>  
                 ) : (
                 <MensagemDone>
-                    <h3>{porcentagem}% dos hábitos concluídos</h3> 
+                    <h3>{porcentagem.toFixed(2)}% dos hábitos concluídos</h3> 
                 </MensagemDone> 
                 )} 
 
@@ -82,7 +82,8 @@ export default function Hoje({userData,setUserProgress}) {
                         serUserProgress ={setUserProgress} 
                         setProgresso = {setProgresso}
                         progresso = {progresso}  
-                        userData = {userData}
+                        userData = {userData} 
+                        porcentagem = {porcentagem}
                     />
                 ))}
                 </Container2>

@@ -2,11 +2,15 @@ import axios from "axios";
 import { useState } from "react"; 
 import styled from "styled-components"; 
 
-export default function Habito({index, id, name, done, highestSequence, currentSequence, setProgresso ,progresso,userData}) {  
+export default function Habito({index, id, name, done, highestSequence, currentSequence, setProgresso ,progresso,userData, porcentagem}) {  
     const [clicked, setClicked] = useState(false); 
 
     function tapCard(cardIndex,id,currentSequence) {    
-        setClicked(!clicked);
+        setClicked(!clicked); 
+
+        if(clicked === false) { 
+            porcentagem--;
+        }
     
         for(let i=0; i<progresso.length; i++) { 
             if(progresso[i] === cardIndex) {
