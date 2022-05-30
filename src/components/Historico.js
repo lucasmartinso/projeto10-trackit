@@ -23,7 +23,7 @@ export default function Hoje({userData}) {
         <Container>
                 <Header>
                     <h2>TrackIt</h2> 
-                    <img src={userData}/>
+                    <img src={userData.image}/>
                 </Header> 
 
                 <Title>

@@ -4,14 +4,15 @@ import Cadastro from "./Cadastro";
 import Habitos from "./Habitos";
 import Hoje from "./Hoje";
 import Login from "./Login"; 
-import Historico from "./Historico";
+import Historico from "./Historico"; 
+import UserContext from "./UserContext";
 
 export default function App() { 
-    const [userData, setUserData] = useState(""); 
+    const [userData, setUserData] = useState({}); 
     console.log(userData);
     return(
        <BrowserRouter>
-            <Routes>
+            <Routes> 
                 <Route path="/" element={<Login setUserData={setUserData}/>} /> 
                 <Route path="/cadastro" element={<Cadastro />} /> 
                 <Route path="/habitos" element={<Habitos userData ={userData}/>} />  

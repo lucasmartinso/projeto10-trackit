@@ -2,18 +2,22 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";   
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
+import { ThreeDots } from  'react-loader-spinner';
 
 export default function Cadastro() {  
     const [name, setName] = useState(""); 
     const [email, setEmail] = useState("");  
     const [password, setPassword] = useState(""); 
-    const [image, setImage] = useState("");   
+    const [image, setImage] = useState("");  
+    const [clicked, setClicked] = useState(false);  
 
     const navigate = useNavigate();
 
     function sendInfo (event) { 
         event.preventDefault(); 
+
+        setClicked(true);
 
         const info = {email, name, image, password };  
         console.log(info);
@@ -25,7 +29,8 @@ export default function Cadastro() {
         }); 
 
         promise.catch(err => {
-            console.log(err.response);
+            alert("USUÁRIO INVÁLIDO OU INEXISTENTE\n\nSenha, email, nome ou imagem incorretos ou já existentes\nPreencha novamente"); 
+            window.location.reload(); 
         });
     }
 
@@ -41,7 +46,11 @@ export default function Cadastro() {
             <input type="password" placeholder="senha" value={password} onChange={(event) => setPassword(event.target.value)} required/>  
             <input type="text" placeholder= "nome" value={name} onChange={(event) => setName(event.target.value)} required /> 
             <input type="url" placeholder= "image" value={image} onChange={(event) => setImage(event.target.value)}required /> 
-            <button>Cadastrar</button> 
+            <button>
+                {clicked ? (
+                    <ThreeDots color="white" height={80} width={80} />
+                    ) : ("Entrar") }
+            </button> 
             <Link to="/"><h3>Já tem uma conta? Faça o login!</h3></Link>
         </Dados>  
         </form>
@@ -103,6 +112,9 @@ const Dados = styled.div`
         font-weight: 400; 
         border-radius: 5px; 
         border:none; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
         
         &:hover{ 
             cursor: pointer;

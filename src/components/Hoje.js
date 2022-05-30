@@ -1,12 +1,40 @@
 import styled from "styled-components"; 
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar'; 
 import 'react-circular-progressbar/dist/styles.css'; 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";  
+import * as dayjs from 'dayjs'; 
+import 'dayjs/locale/pt-br';
+import axios from "axios";
 
 export default function Hoje({userData}) {  
     const navigate = useNavigate();  
     const [clicked, setClicked] = useState(false);  
+    const [listaHabitos, setListaHabitos] = useState([]);
+    const [progresso, setProgresso] = useState([]);
+    
+    let porcentagem = (progresso.length / listaHabitos.length) * 100;
+
+    const dayjs = require('dayjs'); 
+    let now = dayjs().locale('pt-br');
+    let hoje = now.format("dddd, DD/MM"); 
+    console.log(hoje);
+    
+    useEffect(() => {
+        const config = {
+            headers: {Authorization: `Bearer ${userData.token}`}
+        };  
+        const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",config);  
+
+        promise.then(response => { 
+            setListaHabitos([...response.data]); 
+        });   
+
+        promise.catch(err => { 
+            alert("Azedou");
+        }); 
+
+    }, []); 
 
     function toHabitos() {  
         navigate("/habitos");
@@ -18,37 +46,89 @@ export default function Hoje({userData}) {
 
     function toHistorico() { 
         navigate("/historico");
+    } 
+
+    function tapCard(cardIndex,id,currentSequence) {    
+        setClicked(!clicked);
+
+        for(let i=0; i<progresso.length; i++) { 
+            if(progresso[i] === cardIndex) {
+                progresso.splice(i,1); 
+            }
+        }  
+        setProgresso([...progresso,cardIndex]);  
+
+        console.log(id);
+ 
+        const config = {
+            headers: {Authorization: `Bearer ${userData.token}`}
+        };  
+
+        const promise = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,id,config); 
+        
+        promise.then(response => {
+            alert("Deu certooooo"); 
+            currentSequence += 1;
+        }); 
+
+        promise.catch(err => {
+            const promiss = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,id,config); 
+            alert("Ta funfando");
+        });
+    } 
+
+    function RenderizaHabitos({index, id, name, done, highestSequence, currentSequence}) { 
+        return(
+            <Habito clicked={clicked}>
+                <Texto index={index}>
+                    <h2>{name}</h2> 
+                    <p>Sequência atual: {currentSequence} dias</p> 
+                    <p>Seu recorde: {highestSequence} dias</p> 
+                </Texto>  
+                <ion-icon name="checkbox" onClick={() => tapCard(index,id,currentSequence)}></ion-icon>
+            </Habito>  
+        )
     }
 
     return ( 
         <Container>
                 <Header>
                     <h2>TrackIt</h2> 
-                    <img src={userData}/>
+                    <img src={userData.image}/>
                 </Header> 
 
                 <Title>
-                    <h2>Segunda 17/05</h2> 
+                    <h2>{hoje}</h2> 
                 </Title>   
 
+                {progresso.length===0 ? (
                 <Mensagem>
                     <h3>Nenhum hábito concluido ainda</h3> 
-                </Mensagem>   
+                </Mensagem>  
+                ) : (
+                <MensagemDone>
+                    <h3>{porcentagem}% dos hábitos concluídos</h3> 
+                </MensagemDone> 
+                )} 
 
-                <Habito clicked={clicked}> 
-                    <Texto>
-                        <h2>Ler 1 capítulo de livro</h2> 
-                        <p>Sequência atual: 3 dias</p> 
-                        <p>Seu recorde: 5 dias</p> 
-                    </Texto>
-                    <ion-icon name="checkbox" onClick={() => setClicked(!clicked)}></ion-icon>
-                </Habito>
+                <Container2> 
+                {listaHabitos.map((habitos,index) => ( 
+                    <RenderizaHabitos
+                        index = {index}
+                        id= {habitos.id} 
+                        name = {habitos.name}
+                        done = {habitos.done} 
+                        highestSequence= {habitos.highestSequence} 
+                        currentSequence = {habitos.currentSequence}
+                    />
+                ))}
+                </Container2>
 
                 <Footer>
                     <span onClick={toHabitos}>Hábitos</span>   
                     <BolinhaFooter onClick={toHoje}> 
                         <CircularProgressbar 
-                        value={66} 
+                        value={`${porcentagem}`} 
                         text= "Hoje"  
                         styles={buildStyles({
                         trailColor: "rgba(82, 182, 255, 1)",  
@@ -73,6 +153,10 @@ const Container = styled.div`
     align-items: center;   
     background-color: #F2F2F2; 
 `  
+const Container2 = styled.div`
+    display: flex; 
+    flex-direction: column; 
+`
 const Header = styled.div`
     width: 100%; 
     height: 70px; 
@@ -137,6 +221,19 @@ const Mensagem = styled.div`
     h3{ 
         font-size: 18px; 
         color: rgba(186, 186, 186, 1);
+        word-break: break-word;
+    }
+`  
+const MensagemDone = styled.div`
+    width: 100%; 
+    height: 100%;   
+    padding-left: 18px; 
+    padding-right: 18px;  
+    margin-top: 4px;
+
+    h3{ 
+        font-size: 18px; 
+        color: rgba(143, 197, 73, 1);
         word-break: break-word;
     }
 ` 
@@ -209,4 +306,4 @@ const BolinhaFooter = styled.div`
     display: flex;  
     position: relative;  
     margin-bottom: 40px;
-`
+` 

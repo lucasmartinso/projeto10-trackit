@@ -10,11 +10,14 @@ export default function Login({setUserData}) {
     const [password, setPassword] = useState(""); 
     const [email, setEmail] = useState("");  
     const [token, setToken] = useState(""); 
+    const [clicked, setClicked] = useState(false); 
 
     const navigate = useNavigate();
 
     function sendInfo (event) { 
-        event.preventDefault(); 
+        event.preventDefault();  
+
+        setClicked(true); 
 
         const info = {email, password}; 
         const promise = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", info);  
@@ -22,7 +25,7 @@ export default function Login({setUserData}) {
         promise.then(response => {  
             setToken(response.data.token); 
             console.log(response.data.image);  
-            setUserData(response.data.image);  
+            setUserData({image: response.data.image,token: response.data.token});  
             const config = {
                 headers: {Authorization: `Bearer ${response.data.token}`}
             }; 
@@ -31,18 +34,16 @@ export default function Login({setUserData}) {
     
               promiss.then(response => { 
                 console.log(response.data);
-                navigate("/habitos");
+                navigate("/hoje");
               }); 
-    
-              promise.catch(err => {
-                alert("Erro");
-              });
-        });
-
+              }); 
         promise.catch(err => {
-            console(err.response);
+            alert("USUÁRIO INVÁLIDO\n\nSenha ou email incorretos\nPreencha novamente"); 
+            window.location.reload(); 
         });
-    } 
+    };
+
+ 
 
 
     return( 
@@ -55,7 +56,11 @@ export default function Login({setUserData}) {
         <Dados>
             <input type="email" placeholder= "email" value={email} onChange={(event) => setEmail(event.target.value)} required/>
             <input type="password" placeholder="senha" value={password} onChange={(event) => setPassword(event.target.value)} required/>  
-            <button>Entrar</button> 
+            <button>
+                {clicked ? (
+                     <ThreeDots color="white" height={80} width={80} />
+                ) : ("Entrar") }
+            </button> 
             <Link to="/cadastro"><h3>Não tem uma conta? Cadastre-se!</h3></Link>
         </Dados>  
         </form>
@@ -117,6 +122,9 @@ const Dados = styled.div`
         font-weight: 400; 
         border-radius: 5px; 
         border:none; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
         
         &:hover{ 
             cursor: pointer;
