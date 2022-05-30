@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; 
 import { ThreeDots } from  'react-loader-spinner'; 
 
-export default function Habitos({userData}) {  
+export default function Habitos({userData, userProgress}) {  
     const [clicked, setClicked] = useState(false);
     const [habito, setHabito] = useState("");  
     const [dia, setDia] = useState([]); 
@@ -127,7 +127,7 @@ export default function Habitos({userData}) {
                     dia.splice(i,1); 
                 }
             }  
-            setDia([...dia,cardIndex]); 
+            setDia([...dia,cardIndex]);  
     
             days =(infoDias.map((value,index) => {
                 if(index === cardIndex) {  
@@ -140,8 +140,10 @@ export default function Habitos({userData}) {
                         ...value,
                     }
                 }
-            }))
-        }
+            })) 
+            console.log(days);
+        } 
+        console.log(dia);
 
         return(
             <SelecaoDia onClick={() => tapCard(index,abreviatura)} state={state} day={day}>{abreviatura}</SelecaoDia>
@@ -237,20 +239,22 @@ export default function Habitos({userData}) {
                 <h3>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</h3> 
             </Mensagem>   
             ) : "" }
-
+        
+        <Container2>
             {listaHabitos.map(habito =>
                 <RenderizaHabitos 
                     name= {habito.name} 
                     id = {habito.id} 
                     days= {habito.days}
                 />
-            )}
+            )} 
+        </Container2>
 
             <Footer>
                 <span onClick={toHabitos}>Hábitos</span>   
                 <BolinhaFooter onClick={toHoje}> 
                     <CircularProgressbar 
-                    value={66} 
+                    value={userProgress} 
                     text= "Hoje"  
                     styles={buildStyles({
                     trailColor: "rgba(82, 182, 255, 1)",  
@@ -275,6 +279,10 @@ const Container = styled.div`
     flex-direction: column; 
     align-items: center;   
     background-color: #F2F2F2; 
+` 
+
+const Container2 = styled.div`
+    margin-bottom: 300px;
 `
 const Header = styled.div`
     width: 100%; 

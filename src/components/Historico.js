@@ -4,7 +4,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 
-export default function Hoje({userData}) {  
+export default function Hoje({userData, userProgress}) {  
     const navigate = useNavigate();  
 
     function toHabitos() {  
@@ -38,7 +38,7 @@ export default function Hoje({userData}) {
                     <span onClick={toHabitos}>Hábitos</span>   
                     <BolinhaFooter onClick={toHoje}> 
                         <CircularProgressbar 
-                        value={66} 
+                        value={userProgress} 
                         text= "Hoje"  
                         styles={buildStyles({
                         trailColor: "rgba(82, 182, 255, 1)",  

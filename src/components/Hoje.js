@@ -5,15 +5,16 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";  
 import * as dayjs from 'dayjs'; 
 import 'dayjs/locale/pt-br';
-import axios from "axios";
+import axios from "axios"; 
+import Habito from "./Habito";
 
-export default function Hoje({userData}) {  
+export default function Hoje({userData,setUserProgress}) {  
     const navigate = useNavigate();  
-    const [clicked, setClicked] = useState(false);  
     const [listaHabitos, setListaHabitos] = useState([]);
     const [progresso, setProgresso] = useState([]);
     
-    let porcentagem = (progresso.length / listaHabitos.length) * 100;
+    let porcentagem = (progresso.length / listaHabitos.length) * 100; 
+    setUserProgress(porcentagem);
 
     const dayjs = require('dayjs'); 
     let now = dayjs().locale('pt-br');
@@ -46,49 +47,7 @@ export default function Hoje({userData}) {
 
     function toHistorico() { 
         navigate("/historico");
-    } 
-
-    function tapCard(cardIndex,id,currentSequence) {    
-        setClicked(!clicked);
-
-        for(let i=0; i<progresso.length; i++) { 
-            if(progresso[i] === cardIndex) {
-                progresso.splice(i,1); 
-            }
-        }  
-        setProgresso([...progresso,cardIndex]);  
-
-        console.log(id);
- 
-        const config = {
-            headers: {Authorization: `Bearer ${userData.token}`}
-        };  
-
-        const promise = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,id,config); 
-        
-        promise.then(response => {
-            alert("Deu certooooo"); 
-            currentSequence += 1;
-        }); 
-
-        promise.catch(err => {
-            const promiss = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,id,config); 
-            alert("Ta funfando");
-        });
-    } 
-
-    function RenderizaHabitos({index, id, name, done, highestSequence, currentSequence}) { 
-        return(
-            <Habito clicked={clicked}>
-                <Texto index={index}>
-                    <h2>{name}</h2> 
-                    <p>Sequência atual: {currentSequence} dias</p> 
-                    <p>Seu recorde: {highestSequence} dias</p> 
-                </Texto>  
-                <ion-icon name="checkbox" onClick={() => tapCard(index,id,currentSequence)}></ion-icon>
-            </Habito>  
-        )
-    }
+    }  
 
     return ( 
         <Container>
@@ -113,13 +72,17 @@ export default function Hoje({userData}) {
 
                 <Container2> 
                 {listaHabitos.map((habitos,index) => ( 
-                    <RenderizaHabitos
+                    <Habito
                         index = {index}
                         id= {habitos.id} 
                         name = {habitos.name}
                         done = {habitos.done} 
                         highestSequence= {habitos.highestSequence} 
                         currentSequence = {habitos.currentSequence}
+                        serUserProgress ={setUserProgress} 
+                        setProgresso = {setProgresso}
+                        progresso = {progresso}  
+                        userData = {userData}
                     />
                 ))}
                 </Container2>
@@ -237,30 +200,6 @@ const MensagemDone = styled.div`
         word-break: break-word;
     }
 ` 
-const Habito = styled.div` 
-    margin-top: 28px;
-    display: flex; 
-    width: 340px; 
-    height: 94px; 
-    background-color: rgba(255, 255, 255, 1); 
-    border-radius: 5px;  
-    padding: 13px; 
-    position: relative;   
-
-    ion-icon { 
-        width: 69px; 
-        height: 69px; 
-        color: ${props => props.clicked ? "rgba(143, 197, 73, 1)": "rgba(235, 235, 235, 1)"}; 
-        border-radius: 5px; 
-        position: absolute; 
-        right: 10px; 
-        bottom: 13px; 
-
-        &:hover { 
-            cursor: pointer;
-        }
-    }
-`  
 const Texto = styled.div`
     h2 { 
         font-size: 20px;  
