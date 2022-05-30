@@ -4,53 +4,23 @@ import 'react-circular-progressbar/dist/styles.css';
 import { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom"; 
 import axios from "axios"; 
-import { ThreeDots } from  'react-loader-spinner'; 
+import { ThreeDots } from  'react-loader-spinner';  
+import RenderizaHabitos from "./RenderizaHabito";
 
 export default function Habitos({userData, userProgress}) {  
     const [clicked, setClicked] = useState(false);
     const [habito, setHabito] = useState("");  
     const [dia, setDia] = useState([]); 
     const [listaHabitos, setListaHabitos] = useState([]); 
-    const [clicked2, setClicked2] = useState(false);
+    const [clicked2, setClicked2] = useState(false);  
+    const [domingo, setDomingo] = useState(false);
+    const [segunda, setSegunda] = useState(false);
+    const [terca, setTerca] = useState(false); 
+    const [quarta, setQuarta] = useState(false); 
+    const [quinta, setQuinta] = useState(false); 
+    const [sexta, setSexta] = useState(false); 
+    const [sabado, setSabado] = useState(false);
     const navigate = useNavigate();   
-
-    const infoDias = [
-        {
-            abreviatura : "D",  
-            day: "domingo", 
-            state: true
-        }, 
-        {
-            abreviatura : "S",  
-            day: "segunda", 
-            state: false
-        }, 
-        {
-            abreviatura : "T",  
-            day: "terca", 
-            state: false
-        },  
-        {
-            abreviatura : "Q",  
-            day: "quarta", 
-            state: false
-        },  
-        {
-            abreviatura : "Q",  
-            day: "quinta", 
-            state: false
-        },  
-        {
-            abreviatura : "S",  
-            day: "sexta", 
-            state: false
-        },  
-        {
-            abreviatura : "S",  
-            day: "sabado", 
-            state: false
-        } 
-    ];   
 
     useEffect(() => {
         const config = {
@@ -117,86 +87,43 @@ export default function Habitos({userData, userProgress}) {
         });
     }
 
-    function SelectDay({tapCard, index, abreviatura, state, day}) {   
-        let days; 
+    function tapCard(cardIndex) {    
 
-        function tapCard(cardIndex,state) {    
+        for(let i=0; i<dia.length; i++) { 
+            if(dia[i] === cardIndex) {
+                dia.splice(i,1); 
+            }
+        }  
+        setDia([...dia,cardIndex]);  
 
-            for(let i=0; i<dia.length; i++) { 
-                if(dia[i] === cardIndex) {
-                    dia.splice(i,1); 
-                }
-            }  
-            setDia([...dia,cardIndex]);  
-    
-            days =(infoDias.map((value,index) => {
-                if(index === cardIndex) {  
-                    return {
-                        ...value, 
-                        state: !state,
-                    }
-                } else { 
-                    return { 
-                        ...value,
-                    }
-                }
-            })) 
-            console.log(days);
+        if(cardIndex === 0) { 
+            setDomingo(!domingo); 
         } 
-        console.log(dia);
+        if(cardIndex === 1) { 
+            setSegunda(!segunda); 
+        } 
+        if(cardIndex === 2) { 
+            setTerca(!terca); 
+        } 
+        if(cardIndex === 3) { 
+            setQuarta(!quarta); 
+        } 
+        if(cardIndex === 4) { 
+            setQuinta(!quinta); 
+        } 
+        if(cardIndex === 5) { 
+            setSexta(!sexta); 
+        } 
+        if(cardIndex === 6) { 
+            setSabado(!sabado); 
+        }
 
-        return(
-            <SelecaoDia onClick={() => tapCard(index,abreviatura)} state={state} day={day}>{abreviatura}</SelecaoDia>
-        ) 
-    }  
-
-    function RenderizaHabitos({name,id,days}) { 
-        return(
-            <Habit id={id}> 
-                <Texto>
-                    <h2>{name}</h2> 
-                    {infoDias.map((infoDia,index) => ( 
-                        <SelectDay  
-                            index={index}
-                            abreviatura = {infoDia.abreviatura} 
-                            state = {infoDia.state} 
-                            day = {infoDia.day} 
-                    />
-                    ))}
-                </Texto>
-                    <ion-icon name="trash-outline" onClick={() => deletar({id})} id={id}></ion-icon>
-                </Habit> 
-        )
-    } 
-
-    function deletar({id}) {   
-        const config = {
-            headers: {Authorization: `Bearer ${userData.token}`}
-        };  
-
-        const promise = axios.delete(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,config); 
-
-        promise.then(response => {
-            const promiss = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",config);  
-        
-            promiss.then(response => { 
-                setListaHabitos([...response.data]); 
-            });   
-        
-            promiss.catch(err => { 
-                alert("Não deu craque");
-            });
-        }); 
-
-        promise.catch(err => {
-            alert("Vish");
-        });
     } 
 
     function plus() { 
         setClicked(true); 
         setClicked2(false);
-    }
+    }  
 
     return(
         <Container>
@@ -214,14 +141,13 @@ export default function Habitos({userData, userProgress}) {
             <CriarHabito>
                 <input type="text" placeholder= "nome do hábito" value={habito} onChange={(e) => setHabito(e.target.value)} required/>  
                 <Dias> 
-                    {infoDias.map((infoDia,index) => (
-                    <SelectDay  
-                        index={index}
-                        abreviatura = {infoDia.abreviatura} 
-                        state = {infoDia.state} 
-                        day = {infoDia.day} 
-                    />
-                    ))}
+                    <Domingo onClick={() => tapCard(0)} domingo={domingo} >D</Domingo> 
+                    <Segunda onClick={() => tapCard(1)} segunda={segunda}>S</Segunda> 
+                    <Terca onClick={() => tapCard(2)} terca={terca}>T</Terca> 
+                    <Quarta onClick={() => tapCard(3)} quarta={quarta}>Q</Quarta> 
+                    <Quinta onClick={() => tapCard(4)} quinta={quinta}>Q</Quinta> 
+                    <Sexta onClick={() => tapCard(5)} sexta={sexta}>S</Sexta> 
+                    <Sabado onClick={() => tapCard(6)} sabado={sabado}>S</Sabado>
                 </Dias> 
                 <Botoes>
                     <h4 onClick={cancelar}>Cancelar</h4> 
@@ -245,7 +171,25 @@ export default function Habitos({userData, userProgress}) {
                 <RenderizaHabitos 
                     name= {habito.name} 
                     id = {habito.id} 
-                    days= {habito.days}
+                    days= {habito.days} 
+                    setDomingo = {setDomingo} 
+                    setSegunda = {setSegunda} 
+                    setTerca = {setTerca} 
+                    setQuarta = {setQuarta} 
+                    setQuinta = {setQuinta} 
+                    setSexta = {setSexta} 
+                    setSabado = {setSabado} 
+                    domingo = {domingo} 
+                    segunda = {segunda} 
+                    terca = {terca} 
+                    quarta = {quarta} 
+                    quinta = {quinta} 
+                    sexta = {sexta} 
+                    sabado = {sabado} 
+                    userData = {userData} 
+                    setListaHabitos = {setListaHabitos} 
+                    dia = {dia} 
+                    setDia = {setDia}
                 />
             )} 
         </Container2>
@@ -280,9 +224,8 @@ const Container = styled.div`
     align-items: center;   
     background-color: #F2F2F2; 
 ` 
-
 const Container2 = styled.div`
-    margin-bottom: 300px;
+    margin-bottom: 150px;
 `
 const Header = styled.div`
     width: 100%; 
@@ -365,15 +308,93 @@ const Dias = styled.div`
     padding-left: 19px;  
     justify-content: flex-start; 
 `  
-const SelecaoDia = styled.button`
+const Domingo = styled.button`
     border-radius: 5px; 
     margin-right: 4px;
     width: 30px; 
     height: 30px;  
     font-size: 19px;
-    color: ${props => props.state ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    color: ${props => props.domingo ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
     border: 1px solid rgba(212, 212, 212, 1); 
-    background-color: ${props => props.state ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+    background-color: ${props => props.domingo ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+    &:hover{ 
+        cursor: pointer; 
+`  
+const Segunda = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.segunda ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.segunda ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+    &:hover{ 
+        cursor: pointer; 
+`  
+const Terca = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.terca ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.terca ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+    &:hover{ 
+        cursor: pointer; 
+` 
+const Quarta = styled.button`
+border-radius: 5px; 
+margin-right: 4px;
+width: 30px; 
+height: 30px;  
+font-size: 19px;
+color: ${props => props.quarta ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+border: 1px solid rgba(212, 212, 212, 1); 
+background-color: ${props => props.quarta ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+&:hover{ 
+    cursor: pointer; 
+` 
+const Quinta = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.quinta ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.quinta ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+    &:hover{ 
+        cursor: pointer; 
+`  
+const Sexta = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.sexta ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.sexta ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
+
+    &:hover{ 
+        cursor: pointer; 
+`  
+const Sabado = styled.button`
+    border-radius: 5px; 
+    margin-right: 4px;
+    width: 30px; 
+    height: 30px;  
+    font-size: 19px;
+    color: ${props => props.sabado ? "rgba(255, 255, 255, 1)" :  "rgba(207, 207, 207, 1)"}; 
+    border: 1px solid rgba(212, 212, 212, 1); 
+    background-color: ${props => props.sabado ? "rgba(207, 207, 207, 1)" : "rgba(255, 255, 255, 1)"};  
 
     &:hover{ 
         cursor: pointer; 
